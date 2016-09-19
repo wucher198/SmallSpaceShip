@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Utills {
-    public static final String RESOURCES_DIR = "/resources";
+    public static final String RESOURCES_DIR = "/src/main/resources";
 
     public static Map<String, String> loadProperties(String fileName, String resourceDir) {
         final Map<String, String> result = new HashMap<>();
@@ -22,6 +22,8 @@ public class Utills {
         }
 
         Path current = Paths.get("." + resourceDir + "/" + fileName);
+        
+        System.out.println("Path to settings: " + current.toString());
 
         if (Files.exists(current)) {
             try {

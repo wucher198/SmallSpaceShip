@@ -18,10 +18,10 @@ public class MainClass {
         JFrame frame = new JFrame("HelloWorldSwing");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setBounds(
-                Integer.valueOf(startProps.get(PropertiesNames.main_window_x.toString())),
-                Integer.valueOf(startProps.get(PropertiesNames.main_window_y.toString())),
-                Integer.valueOf(startProps.get(PropertiesNames.main_window_width.toString())),
-                Integer.valueOf(startProps.get(PropertiesNames.main_window_height.toString())));
+                Integer.valueOf(startProps.get(PropertiesNames.main_window_x)),
+                Integer.valueOf(startProps.get(PropertiesNames.main_window_y)),
+                Integer.valueOf(startProps.get(PropertiesNames.main_window_width)),
+                Integer.valueOf(startProps.get(PropertiesNames.main_window_height)));
 
         //Add the ubiquitous "Hello World" label
         JLabel label = new JLabel("Hello World");
