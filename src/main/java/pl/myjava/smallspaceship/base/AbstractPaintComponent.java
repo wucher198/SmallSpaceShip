@@ -19,7 +19,6 @@ public abstract class AbstractPaintComponent extends JComponent {
 
     @Override
     protected void paintComponent(Graphics g) {
-        logger.log(Level.INFO, "Paint Component");
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
         drawEntitis(g2);
