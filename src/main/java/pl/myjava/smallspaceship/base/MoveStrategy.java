@@ -5,7 +5,7 @@ import java.awt.geom.Point2D;
 /**
  * Created by anonim on 14.03.17.
  */
-interface MoveStrategy {
+public interface MoveStrategy {
     /**
      * Set new X speed.
      * @param newXSpeed

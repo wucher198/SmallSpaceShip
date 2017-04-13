@@ -6,6 +6,7 @@ import pl.myjava.smallspaceship.enums.PropertiesNames;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Level;
@@ -40,7 +41,7 @@ public class SmallSpaceShip {
         logger.log(Level.ALL, String.format(System.getProperty("user.dir")));
 
         // Create and set up the window.
-        JFrame mainWindow = new JFrame("HelloWorldSwing");
+        JFrame mainWindow = new JFrame("Small Space Ship");
         mainWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         mainWindow.setBounds(
                 Integer.valueOf(applicationProperties.get(PropertiesNames.main_window_x.name())),
@@ -48,7 +49,7 @@ public class SmallSpaceShip {
                 Integer.valueOf(applicationProperties.get(PropertiesNames.main_window_width.name())),
                 Integer.valueOf(applicationProperties.get(PropertiesNames.main_window_height.name())));
         mainWindow.setLayout(new BorderLayout());
-        SnowPaintComponent panel = new SnowPaintComponent();
+        SnowPaintComponent panel = new SnowPaintComponent(Arrays.asList(new SnowEntity(100, 100)));
         mainWindow.add(panel, BorderLayout.CENTER);
 
         // Display the window

@@ -6,7 +6,7 @@ import java.awt.geom.Point2D;
 /**
  * Created by anonim on 14.03.17.
  */
-interface DrawStrategy {
+public interface DrawStrategy {
     /**
      * Set shape that will be draw on new
      * @param shape

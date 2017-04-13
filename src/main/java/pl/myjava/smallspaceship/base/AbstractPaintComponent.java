@@ -46,11 +46,11 @@ public abstract class AbstractPaintComponent extends JComponent {
 
             while (running) {
                 try {
-                    logger.log(Level.INFO, "Loop Execution Start");
+                    logger.log(Level.FINEST, "Loop Execution Start");
                     componentToPaint.moveEntitis();
                     componentToPaint.repaint();
                     Thread.sleep(25);
-                    logger.log(Level.INFO, "Loop Execution Stop");
+                    logger.log(Level.FINEST, "Loop Execution Stop");
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
