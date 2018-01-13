@@ -10,13 +10,16 @@ import java.util.logging.Logger;
 public class Entity {
     private static final Logger LOGGER = Logger.getLogger(Entity.class.getName());
 
+    private static final int MAX_ROTATE_SPEED = 10;
+    private static final int MAX_SPEED = 50;
+
     private Point2D.Double topLeft = new Point2D.Double(40, 40);
-    private int dx = 0;
-    private int dy = 0;
+    private int speed = 0;
+    private int rotateSpeed = 0;
+    private int dirction = 0;
     private Image image;
 
     public void initDefaultEntity() {
-
         image = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2bi = (Graphics2D) image.getGraphics();
         g2bi.setColor(Color.CYAN);
@@ -26,12 +29,15 @@ public class Entity {
         g2bi.dispose();
     }
 
-    final public void draw(Graphics2D g2) {
+    final public void draw(Graphics2D g) {
+        Graphics2D g2 = (Graphics2D) g.create();
         if (image != null) {
+            g2.rotate(dirction * Math.PI / 180, topLeft.getX() + 8 , topLeft.getY() + 8);
             g2.drawImage(image, (int) topLeft.getX(), (int) topLeft.getY(), null);
         }
 
         Toolkit.getDefaultToolkit().sync();
+        g2.dispose();
     }
 
     final public void setTopLeft(Point2D.Double topLeft) {
@@ -49,6 +55,33 @@ public class Entity {
     }
 
     public void move(double maxX, double minX, double maxY, double minY) {
+        if (dirction > 360) {
+            dirction = 0;
+        } else if (dirction < 0) {
+            dirction = 360;
+        }
+
+        dirction += rotateSpeed;
+        rotateSpeed = 0;
+
+
+        double dx = 0;
+        double dy = 0;
+
+        if (dirction >= 0 && dirction < 90) {
+            dx = Math.sin(dirction * Math.PI / 180) * speed;
+            dy = - Math.cos(dirction * Math.PI / 180) * speed;
+        } else if (dirction >= 90 && dirction < 180) {
+            dx = Math.sin((180 - dirction) * Math.PI / 180) * speed;
+            dy = Math.cos((180 - dirction) * Math.PI / 180) * speed;
+        } else if (dirction >= 180 && dirction < 270) {
+            dx = - Math.sin((270 - dirction) * Math.PI / 180) * speed;
+            dy = Math.cos((270 - dirction) * Math.PI / 180) * speed;
+        } else {
+            dx = - Math.sin((360 - dirction) * Math.PI / 180) * speed;
+            dy = - Math.cos((360 - dirction) * Math.PI / 180) * speed;
+        }
+
         double xOut = topLeft.getX() + dx;
         double yOut = topLeft.getY() + dy;
 
@@ -78,16 +111,23 @@ public class Entity {
     private void parseKey(KeyEvent keyEvent) {
         switch (getKeyCode(keyEvent)) {
             case KeyEvent.VK_UP:
-                dy--;
+                if (speed < MAX_SPEED)
+                speed++;
                 break;
             case KeyEvent.VK_DOWN:
-                dy++;
+                if (speed > 0) {
+                    speed--;
+                }
                 break;
             case KeyEvent.VK_LEFT:
-                dx--;
+                if (rotateSpeed > -MAX_ROTATE_SPEED) {
+                    rotateSpeed -= 5;
+                }
                 break;
             case KeyEvent.VK_RIGHT:
-                dx++;
+                if (rotateSpeed < MAX_ROTATE_SPEED) {
+                    rotateSpeed += 5;
+                }
                 break;
             default:
                 System.out.println("Key not supported: " + keyEvent.getKeyChar());
