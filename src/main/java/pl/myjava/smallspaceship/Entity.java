@@ -6,6 +6,7 @@ import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.util.Arrays;
 import java.util.logging.Logger;
+import java.util.stream.Stream;
 
 public class Entity {
     private static final Logger LOGGER = Logger.getLogger(Entity.class.getName());
@@ -19,31 +20,57 @@ public class Entity {
     private int dirction = 0;
     private Image image;
 
+    private Point2D.Double[] trace = new Point2D.Double[1000];
+    private int currentTrace = 0;
+
     public void initDefaultEntity() {
         image = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2bi = (Graphics2D) image.getGraphics();
         g2bi.setColor(Color.CYAN);
-        int x[] = {0, 8, 15, 0};
-        int y[] = {15, 0, 15, 15};
+        int x[] = {0, 7, 14, 0};
+        int y[] = {14, 0, 14, 14};
         g2bi.draw(new Polygon(x, y, 4));
         g2bi.dispose();
     }
 
     final public void draw(Graphics2D g) {
         Graphics2D g2 = (Graphics2D) g.create();
+
         if (image != null) {
-            g2.rotate(dirction * Math.PI / 180, topLeft.getX() + 8 , topLeft.getY() + 8);
-            g2.drawImage(image, (int) topLeft.getX(), (int) topLeft.getY(), null);
+            double theta = dirction * Math.PI / 180;
+            g2.rotate(theta, topLeft.getX(), topLeft.getY());
+            g2.drawImage(image, (int) topLeft.getX() - 7, (int) topLeft.getY() - 7, null);
+            g2.rotate(-theta, topLeft.getX(), topLeft.getY());
         }
 
-        Toolkit.getDefaultToolkit().sync();
+        Stream.of(trace).filter(singleTrace -> singleTrace != null).forEach(singleTrace -> {
+            g2.setColor(Color.WHITE);
+            g2.drawOval((int) singleTrace.getX() - 1, (int) singleTrace.getY() - 1, 3, 3);
+
+        });
+
+        Toolkit.getDefaultToolkit().
+
+                sync();
         g2.dispose();
     }
 
-    final public void setTopLeft(Point2D.Double topLeft) {
-        if (topLeft != null) {
-            this.topLeft = topLeft;
+    private void addTrace() {
+        currentTrace++;
+
+        if (currentTrace >= 1000) {
+            currentTrace = 0;
         }
+
+        trace[currentTrace] = new Point2D.Double(topLeft.getX(), topLeft.getY());
+    }
+
+    final public void setTopLeft(Point2D.Double topLeft) {
+        this.topLeft = topLeft;
+    }
+
+    public void setTopLeft(Double x, Double y) {
+        topLeft = new Point2D.Double(x, y);
     }
 
     final public void setImage(Image image) {
@@ -68,19 +95,26 @@ public class Entity {
         double dx = 0;
         double dy = 0;
 
-        if (dirction >= 0 && dirction < 90) {
-            dx = Math.sin(dirction * Math.PI / 180) * speed;
-            dy = - Math.cos(dirction * Math.PI / 180) * speed;
-        } else if (dirction >= 90 && dirction < 180) {
-            dx = Math.sin((180 - dirction) * Math.PI / 180) * speed;
-            dy = Math.cos((180 - dirction) * Math.PI / 180) * speed;
-        } else if (dirction >= 180 && dirction < 270) {
-            dx = - Math.sin((270 - dirction) * Math.PI / 180) * speed;
-            dy = Math.cos((270 - dirction) * Math.PI / 180) * speed;
-        } else {
-            dx = - Math.sin((360 - dirction) * Math.PI / 180) * speed;
-            dy = - Math.cos((360 - dirction) * Math.PI / 180) * speed;
-        }
+//        if (dirction > 0 && dirction <= 90) {
+//            dx = Math.sin(dirction * Math.PI / 180) * speed;
+//            dy = -Math.cos(dirction * Math.PI / 180) * speed;
+//        } else if (dirction > 90 && dirction <= 180) {
+//            dx = Math.sin((180 - dirction) * Math.PI / 180) * speed;
+//            dy = Math.cos((180 - dirction) * Math.PI / 180) * speed;
+//        } else if (dirction > 180 && dirction <= 270) {
+//            dx = -Math.cos((270 - dirction) * Math.PI / 180) * speed;
+//            dy = Math.sin((270 - dirction) * Math.PI / 180) * speed;
+//        } else {
+//            dx = -Math.sin((360 - dirction) * Math.PI / 180) * speed;
+//            dy = -Math.cos((360 - dirction) * Math.PI / 180) * speed;
+//        }
+
+        dx = Math.cos(Math.toRadians(dirction));
+        dy = Math.sin(Math.toRadians(dirction));
+
+
+
+//        System.out.println("DX: " + dx + "; DY: " + dy);
 
         double xOut = topLeft.getX() + dx;
         double yOut = topLeft.getY() + dy;
@@ -98,6 +132,7 @@ public class Entity {
         }
 
         topLeft.setLocation(xOut, yOut);
+        addTrace();
     }
 
     protected void keyPressed(KeyEvent keyEvent) {
@@ -112,7 +147,7 @@ public class Entity {
         switch (getKeyCode(keyEvent)) {
             case KeyEvent.VK_UP:
                 if (speed < MAX_SPEED)
-                speed++;
+                    speed++;
                 break;
             case KeyEvent.VK_DOWN:
                 if (speed > 0) {
@@ -136,5 +171,21 @@ public class Entity {
 
     protected int getKeyCode(KeyEvent keyEvent) {
         return keyEvent.getKeyCode();
+    }
+
+    public Point2D.Double getTopLeft() {
+        return topLeft;
+    }
+
+    public int getSpeed() {
+        return speed;
+    }
+
+    public int getRotateSpeed() {
+        return rotateSpeed;
+    }
+
+    public int getDirction() {
+        return dirction;
     }
 }

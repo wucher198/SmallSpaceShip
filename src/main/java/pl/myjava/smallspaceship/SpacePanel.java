@@ -8,11 +8,17 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.Date;
 
-public class SpacePanel extends MainPanel implements ActionListener {
+public class SpacePanel extends BasicPanel implements ActionListener {
     private Timer timer;
+    private StatusPanel statusPanel;
     private long start;
     private final long MIN_TIME = 1000;
+    private final int DELAY = 25;
     private long count;
+
+    public SpacePanel(StatusPanel statusPanel) {
+        this.statusPanel = statusPanel;
+    }
 
     public void initPanel() {
         addKeyListener(new KeysAdapter());
@@ -20,7 +26,7 @@ public class SpacePanel extends MainPanel implements ActionListener {
         setBackground(Color.BLACK);
         setDoubleBuffered(true);
 
-        timer = new Timer(25,this);
+        timer = new Timer(DELAY,this);
         timer.start();
     }
 
@@ -40,7 +46,7 @@ public class SpacePanel extends MainPanel implements ActionListener {
         long stop = new Date().getTime();
 
         if (stop - start >= MIN_TIME) {
-            System.out.println(1000 * count / (stop - start) + ": " + (stop - start));
+//            System.out.println(1000 * count / (stop - start) + ": " + (stop - start));
             start = -1;
             count = 0;
         }
@@ -52,6 +58,7 @@ public class SpacePanel extends MainPanel implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         MainGameClass.entitys.entrySet().forEach(entry -> entry.getValue().move(getWidth(), 0, getHeight(), 0));
         repaint();
+        statusPanel.repaint();
     }
 
     private class KeysAdapter extends KeyAdapter {

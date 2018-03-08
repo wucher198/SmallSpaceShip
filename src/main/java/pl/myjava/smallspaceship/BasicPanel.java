@@ -3,7 +3,7 @@ package pl.myjava.smallspaceship;
 import javax.swing.*;
 import java.awt.*;
 
-public abstract class MainPanel extends JPanel {
+public abstract class BasicPanel extends JPanel {
     abstract protected void doDrawing(Graphics g);
 
     protected Graphics2D create(Graphics g) {
@@ -26,5 +26,6 @@ public abstract class MainPanel extends JPanel {
         super.paintComponent(g);
 
         doDrawing(g);
+        Toolkit.getDefaultToolkit().sync();
     }
 }
